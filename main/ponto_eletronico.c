@@ -308,6 +308,9 @@ void configure_rfid()
     rc522_pause();
 }
 
+#define PASSWORD_MAX_SIZE 32
+static char g_password[PASSWORD_MAX_SIZE] = {}:
+
 void ponto_eletronico(void *parameter)
 {
     while (1)
@@ -318,34 +321,30 @@ void ponto_eletronico(void *parameter)
         else if (0)
             inOut = 0;
         // ler tag do rfid
-        rc522_start2();
-        while (tag == NULL)
+        while (rfid == NULL)
         {
-            ESP_LOGI(TAG, "Waiting for rfid reading...");
+            ESP_LOGI(tag, "Waiting for rfid reading...");
             vTaskDelay(100 / portTICK_PERIOD_MS);
         }
-        rc522_pause();
 
         // ler senha
-        char *password = readPassword();
+        readPassword(g_password);
 
-        // tirar foto
+        //tirar foto
         takePhoto();
-
         // realizar request
-        http_rest_with_url(tag, password, inOut);
+        http_rest_with_url(tag, (char*) password, inOut);
         vTaskDelay(3000 / portTICK_PERIOD_MS);
         free(tag);
     }
 }
 
-char *readPassword()
+void readPassword(char *password)
 {
-    return NULL;
+    password = NULL;
 }
 
-char *takePhoto()
-{
+char *takePhoto(){
     return NULL;
 }
 
@@ -363,5 +362,4 @@ void app_main(void)
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
     wifi_init_sta();
     configure_rfid();
-    xTaskCreate(ponto_eletronico, "ponto eletronico", 8192, NULL, 1, NULL);
 }
